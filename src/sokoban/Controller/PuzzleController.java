@@ -73,6 +73,7 @@ public class PuzzleController extends Controller {
                 if(lv[x-1][y] == 5 || lv[x-1][y] == 3){//piso o meta
                     cas[x-1][y] = jugador;
                     cas[x-1][y].pos(x-1,y);
+                     lv[x-1][y] = cas[x][y].getTipo();
                     jugador = cas[x-1][y];
                    cas[x][y].setTipo(5);
                 //    System.out.println("|X"+jugador.getFil()+"|Y"+jugador.getCol());    
@@ -88,6 +89,7 @@ public class PuzzleController extends Controller {
                 if(lv[x+1][y] == 5 || lv[x+1][y] == 3){//piso o meta
                     cas[x+1][y] = jugador;
                     cas[x+1][y].pos(x+1, y);
+                    lv[x+1][y] = cas[x+1][y].getTipo();
                     jugador = cas[x+1][y];
                    cas[x][y].setTipo(5);
                 //    System.out.println("|X"+jugador.getFil()+"|Y"+jugador.getCol());    
@@ -100,8 +102,9 @@ public class PuzzleController extends Controller {
             System.out.println("RIGTH!");
             if(y<=4){//
                 if(lv[x][y+1] == 5 || lv[(x)][y+1] == 3){//piso o meta
-                      cas[x][y+1] = jugador;
+                    cas[x][y+1] = jugador;
                     cas[x][y+1].pos(x,y+1);
+                     lv[x][y+1] = cas[x][y+1].getTipo();
                     jugador = cas[x][y+1];
                    cas[x][y].setTipo(5);
                 //    System.out.println("|X"+jugador.getFil()+"|Y"+jugador.getCol());    
@@ -113,18 +116,23 @@ public class PuzzleController extends Controller {
         
         if(event.getCode().equals(KeyCode.LEFT)){  
             System.out.println("LEFT!");
-            if(0 < y){//
+            if(0 < y){// 
                 if(lv[x][y-1] == 5 || lv[(x)][y-1] == 3){//piso o meta
-                     cas[x][y-1] = jugador;
+                    cas[x][y-1] = jugador;
                     cas[x][y-1].pos(x,y-1);
+                    lv[x][y-1] = cas[x][y-1].getTipo();
                     jugador = cas[x][y-1];
-                   cas[x][y].setTipo(5);
+                if(lv[x][y-1] == 5)cas[x][y].setTipo(5);
+                
+                else cas[x][y].setTipo(5);
                 //    System.out.println("|X"+jugador.getFil()+"|Y"+jugador.getCol());    
                     tablero.add(CrearPane(cas[x][y-1],x, y-1), y-1, x);
                     tabl[x][y].Desaparecer();
+                    
                 }
             }
-        }             
+        }   
+        event.consume();
     }
         }
             );
