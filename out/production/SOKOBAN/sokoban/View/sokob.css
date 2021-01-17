@@ -1,0 +1,26 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.inicio{
+    -fx-background-color:#ce5151;
+    -fx-border-color:white;
+    -fx-background-radius:25 25 25 25;
+    -fx-border-radius:25 25 25 25;
+    -fx-border-width: 3;
+}
+.buton{
+-fx-background-color: #4CAF50;
+-fx-background-radius:25 25 25 25;
+-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
+-fx-border-color:white;
+-fx-border-radius:25 25 25 25;
+-fx-border-width: 3;
+}
+.texto{
+   -fx-font-size: 15px;
+    -fx-font-family:"Monospace";
+    -fx-font-weight:300;
+    -fx-text-fill: black;
+    -fx-background-color:#4CAF50;
+}

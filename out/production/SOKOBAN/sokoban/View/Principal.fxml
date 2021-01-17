@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="root" prefHeight="538.0" prefWidth="296.0" styleClass="inicio" stylesheets="@sokob.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sokoban.Controller.PrincipalController">
+   <children>
+      <JFXButton buttonType="RAISED" layoutX="81.0" layoutY="404.0" prefHeight="45.0" prefWidth="134.0" styleClass="buton" text="Cargar Partida" textAlignment="CENTER" />
+      <JFXButton buttonType="RAISED" layoutX="80.0" layoutY="340.0" onAction="#acercade" prefHeight="45.0" prefWidth="134.0" styleClass="buton" text="Aceca de" />
+      <JFXButton buttonType="RAISED" layoutX="80.0" layoutY="282.0" onAction="#Inicio" prefHeight="45.0" prefWidth="134.0" styleClass="buton" stylesheets="@sokob.css" text="Iniciar Partida" />
+      <ImageView fx:id="img" fitHeight="150.0" fitWidth="200.0" layoutX="58.0" layoutY="22.0" pickOnBounds="true" preserveRatio="true" styleClass="inicio">
+         <image>
+            <Image url="@../img/saludo.png" />
+         </image>
+      </ImageView>
+      <JFXComboBox fx:id="cmbox" layoutX="108.0" layoutY="226.0" promptText="Nivel" />
+      <JFXTextField fx:id="txtNombre" layoutX="72.0" layoutY="188.0" promptText="Nombre del jugador" />
+   </children>
+</AnchorPane>
