@@ -94,7 +94,7 @@ public class FlowController {
 
     public void goMain() {
         try {
-            Musica(true);
+          //  Musica(true);
             FlowController.mainStage.setScene(new Scene(FXMLLoader.load(Main.class.getResource("View/Principal.fxml"),null)));
           
             FlowController.mainStage.setTitle("SOKOBAN");

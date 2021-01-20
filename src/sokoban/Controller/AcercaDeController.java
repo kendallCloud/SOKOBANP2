@@ -41,18 +41,7 @@ public class AcercaDeController extends Controller {
          ft.setToValue(0);
          ft.setNode(box1);
          ft.setCycleCount(4);
-//         ft.setAutoReverse(true);
-//         while(n < (65*12)){
-//            box1.setX(65);
-//            
-//            n+=65;
-//         }
-         
-//         FadeTransition f = new FadeTransition(Duration.millis(3000),box2);
-//         ft.setToValue(0.3);
-//         ft.setCycleCount(4);
-//         ft.setAutoReverse(true);
- 
+
         ft.play();
        /// f.play();
     }

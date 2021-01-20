@@ -37,7 +37,7 @@ public class PrincipalController extends Controller {
     @FXML
     private JFXTextField txtNombre;
     
-    String niveles[] = {"1","2","3"};
+    String niveles[] = {"1","2","3","4","5"};
 
     /**
      * Initializes the controller class.
