@@ -38,21 +38,23 @@ public class PuzzleController extends Controller {
     private JFXButton btnPausa;
     
     
-     private int nivel;
+     
     CasillaController tabl[][] = new CasillaController[8][6];
     Casilla jugador;
     Casilla caja1;
+    private int nivel,cant_metas;
+    int cont_metas = 0;
     int [] meta1 = new int[2];//guardo las coordenadas de la meta
     int [] meta2 = {-1,-1};
     int [] meta3 = {-1,-1};
     int[][] lv = new int[8][6];
     Casilla[][] cas = new Casilla[8][6];
+    
     @FXML
     private JFXTextField txtnivel;
     @FXML
     private AnchorPane root;
-    @FXML
-    private JFXTextField txtmetas;
+  
    
     
     
@@ -63,6 +65,7 @@ public class PuzzleController extends Controller {
 
     @Override
     public void initialize() {
+        
         AppContext.getInstance().set("tablero",this);
         tabl = new CasillaController[8][6];
         nivel = (int)AppContext.getInstance().get("lvl");
@@ -72,7 +75,7 @@ public class PuzzleController extends Controller {
                 
         root.setOnKeyPressed((KeyEvent event) -> {
             int x=jugador.getFil(),y = jugador.getCol();
-            System.out.println("Jugador|X"+x+"|Y"+y);
+          //  System.out.println("Jugador|X"+x+"|Y"+y);
             if(event.getCode().equals(KeyCode.UP)){
                 System.out.println("UP!");
                 
@@ -84,21 +87,19 @@ public class PuzzleController extends Controller {
                     else if(lv[(x-1)][y] == 2){//caja
                         System.out.println("CAJA!");
                         MoverCaja(x-1,y,'U');
-                          if(Gana())System.out.println("GANÓ");
+                          if(Gana())GameOver();
                     }
                 }
             }   if(event.getCode().equals(KeyCode.DOWN)){ 
                 System.out.println("DOWN!");
                 if(x <= 6){//
                     if(lv[x+1][y] == 5 || lv[x+1][y] == 3){//piso o meta
-                        MoverJugador(x,y,'D');
-                      
-                        
+                        MoverJugador(x,y,'D');                    
                     }
                     else if(lv[(x+1)][y] == 2){
                         System.out.println("CAJA!");
                         MoverCaja(x+1,y,'D');
-                        if(Gana())System.out.println("GANÓ");
+                        if(Gana())GameOver();
                     }
                 }
             }   if(event.getCode().equals(KeyCode.RIGHT)){ 
@@ -111,21 +112,20 @@ public class PuzzleController extends Controller {
                     else if(lv[(x)][y+1] == 2){
                         System.out.println("CAJA!");      
                         MoverCaja(x,y+1,'R');
-                        if(Gana())System.out.println("GANÓ");
+                        if(Gana())GameOver();
                     }
                 }
             }   if(event.getCode().equals(KeyCode.LEFT)){   
                 System.out.println("LEFT!");
                 if(0 < y){//
                     if(lv[x][y-1] == 5 || lv[(x)][y-1] == 3){//piso o meta
-                        if(lv[(x)][y-1] == 3)System.out.println("META!");
                         MoverJugador(x,y,'L');
                        
                     }
                     else if(lv[(x)][y-1] == 2){//se topa con la caja 
                         System.out.println("CAJA!");
                        MoverCaja(x,y-1,'L');//mando la posición actual y la dirección a la que quiero moverla.
-                         if(Gana())System.out.println("GANÓ");
+                        if(Gana())GameOver();
                     }
                 }
             }   event.consume();
@@ -136,8 +136,7 @@ public class PuzzleController extends Controller {
     
      @FXML
     private void Reinicio(ActionEvent event) {
-        Mensaje.show(Alert.AlertType.CONFIRMATION, "FAVOR CONFIRMAR", "¿Seguro de reiniciar el nivel?");  
-     
+        Mensaje.show(Alert.AlertType.CONFIRMATION, "FAVOR CONFIRMAR", "¿Seguro de reiniciar el nivel?");      
         this.initialize();
     }    
           
@@ -193,7 +192,7 @@ public class PuzzleController extends Controller {
                 if(lv[x][y-1] == 5)cas[x][y].setTipo(5);        
                 else cas[x][y].setTipo(5);
                     tablero.add(CrearPane(cas[x][y-1],x, y-1), y-1, x);
-                    tabl[x][y].Desaparecer();
+                     tabl[x][y].Desaparecer();
                      lv[x][y] = 5;
                       lv[x][y-1]=2;
                 }
@@ -205,7 +204,8 @@ public class PuzzleController extends Controller {
         
         switch(event){
             case 'U':
-                if(0 < x && lv[x-1][y] != 4 && lv[x-1][y] != 2){//4 = pared
+             if(0 < x ){
+                if(lv[x-1][y] != 4 && lv[x-1][y] != 2){//4 = pared
                 //mover caja
                     cas[x-1][y] = caja1;
                     cas[x-1][y].pos(x-1,y);                 
@@ -213,16 +213,18 @@ public class PuzzleController extends Controller {
                     System.out.println(caja1.getCol()+"|"+caja1.getFil());
 
                     tablero.add(CrearPane(cas[x-1][y],x, y),y, x-1);//seteo caja.
-                   //tablero.add(CrearPane(cas[x][y],x, y), y, x);//seteo jugador 
+                  
                      tabl[x+1][y].Desaparecer();
                      lv[x][y]=5;
                      lv[x-1][y]=2;
                        MoverJugador(x+1,y,'U');
                 }
+             }
                           break; 
                 //             
             case 'D':
-                if(lv[x+1][y] != 2 && x < 7 && x > 0 && 4 != lv[x+1][y]){
+             if(x < 7 && x > 0){
+                if(lv[x+1][y] != 2 && 4 != lv[x+1][y]){
                 //mover caja
                    cas[x+1][y] = caja1;
                     cas[x+1][y].pos(x+1,y);                 
@@ -233,17 +235,16 @@ public class PuzzleController extends Controller {
                      tabl[x-1][y].Desaparecer();
                      lv[x+1][y]=2;
                      lv[x][y] = 5;
-                     MoverJugador(x-1,y,'D');
-                     
-                // 
-                }
+                     MoverJugador(x-1,y,'D'); 
+                    }
+             }
                      break; 
                 
                 
             case 'R':         
                  //mover caja
-                
-                if(y < 5 && lv[x][y+1] != 4 && lv[x][y+1] != 2){
+              if(y < 5){  
+                if(lv[x][y+1] != 4 && lv[x][y+1] != 2){
                 
                  cas[x][y+1] = caja1;            
                     cas[x][y+1].pos(x,y+1);                 
@@ -256,10 +257,12 @@ public class PuzzleController extends Controller {
                      lv[x][y] = 5;
                      lv[x][y+1] = 2;//nueva ubicación de la caja.
                      MoverJugador(x,y-1,'R');
-                }   
+                    }
+              }
                      break;             
             case 'L':  
-                if(0 < y && lv[x][y-1] != 4 && lv[x][y-1] != 2){
+             if(0 < y ){
+                if( lv[x][y-1] != 4 && lv[x][y-1] != 2){
                  cas[x][y-1] = caja1;
                     cas[x][y-1].pos(x,y-1);                 
                     caja1 = cas[x][y-1];
@@ -273,28 +276,79 @@ public class PuzzleController extends Controller {
                      lv[x][y-1] = 2;//nueva ubicación de la caja.
                        MoverJugador(x,y+1,'L');                    
                 }
+             }
                      break;               
         }      
            
        }
       private boolean Gana(){
-        int x = caja1.getFil();
-        int y = caja1.getCol();
         
-          System.out.println("GANA|"+x+"|"+y);
+        int[][] xy = new  int[3][2];
+        int n = 0,n1 = 0;
+        boolean check1 = false,check2 = false,check3 = false;
         
-        if(x == meta1[0] && y==meta1[1] && nivel == 1){
-            Mensaje.show(Alert.AlertType.INFORMATION, "", "NIVEL COMPLETADO.");
-            AppContext.getInstance().set("lvl",(nivel+1));
-            this.initialize();
+        for(int i = 0;i < 8;i++){//obtengo las coordenadas de cada caja para compararlas con las coordenadas de las metas.
+            for(int j = 0;j < 6;j++){
+                if(lv[i][j]==2){
+                    xy[n][0]=i;
+                    xy[n][1]=j;
+                    if(n < 2) n++;
+                   else n=0;
+                }
+                else{
+//                    xy[n1][0]=-1;
+//                   xy[n1][1]=-1;
+                   if(n1 < 2) n1++;
+                   else n1=0;
+                }
+            }
+         }
+        
+        for(int f=0;f < 3;f++){
+            if(xy[f][0] == meta1[0] && xy[f][1] == meta1[1])check1 =true;
         }
-        else if(nivel == 2){
-            
-        }
-        else{
-            
-        }
-        return x == meta1[0] && y==meta1[1];
+        
+          for(int f=0;f < 3;f++){
+            if(xy[f][0] == meta2[0] && xy[f][1] == meta2[1])check2 =true;
+            }
+          
+            for(int f=0;f < 3;f++){
+            if(xy[f][0] == meta3[0] && xy[f][1] == meta3[1])check3 =true;
+            }
+        
+        //  System.out.println("GANA|"+x+"|"+y);
+          
+//          check1 = (x == meta1[0] && y==meta1[1]);
+//          check2 = ( x == meta2[0] && y==meta2[1]);
+//          check3 = (x == meta3[0] && y==meta3[1]);
+//        
+//        if(x == meta1[0] && y==meta1[1] && nivel==1){
+////                cont_metas++;
+////                if(cont_metas == cant_metas) GameOver();
+//        }
+        //else if(nivel == 2 && x == meta2[0] && y==meta2[1]){
+           
+//            cont_metas++;
+//            if(cont_metas == cant_metas) GameOver();
+//        }
+//       / else if(nivel == 2 && x == meta3[0] && y==meta3[1]){
+//             cont_metas++;
+//               if(cont_metas == cant_metas) GameOver();
+//        }
+
+           switch(cant_metas){
+               case 1: return check1;
+               case 2: return check1&&check2;
+               case 3: return check1&&check2&&check3;
+               default: return false;
+           }
+
+    }
+      
+    public void GameOver(){
+         Mensaje.show(Alert.AlertType.INFORMATION, "", "NIVEL COMPLETADO.");
+         if(nivel < 5)   AppContext.getInstance().set("lvl",(nivel+1));
+        this.initialize();
     }
 
     @Override
@@ -355,7 +409,7 @@ public class PuzzleController extends Controller {
             for(int j = 0;j < 6;j++){
                 lv[i][j]=5;
             }
-        }
+         }
          switch(n){
              case 2:Nivel2();break;
              case 3:Nivel3();break;
@@ -365,12 +419,11 @@ public class PuzzleController extends Controller {
          }
          
      }
-    
-    
+      
   //   1=jugador 2=caja 3=meta 4=pared 5=piso.
      
           public void Nivel5(){
-              
+                txtnivel.setText("NIVEL 5");
               lv[0][2]=1;
                
             int cont = 0;         
@@ -397,6 +450,7 @@ public class PuzzleController extends Controller {
              meta1[0]=0;meta1[1]=0;
              meta2[0]=2;meta2[1]=0;
              meta3[0]=4;meta3[1]=0;
+             cant_metas = 3;
               
             
           }
@@ -423,6 +477,8 @@ public class PuzzleController extends Controller {
              meta1[0]=0;meta1[1]=0;
              meta2[0]=2;meta2[1]=2;
              meta3[0]=4;meta3[1]=4;
+             
+            cant_metas = 3;
          
          }
     
@@ -455,7 +511,8 @@ public class PuzzleController extends Controller {
         
         meta1[0]=6;meta1[1]=5;
         meta2[0]=6;meta2[1]=4;
-        meta3[0]=5;meta3[1]=4;
+        meta3[0]=5;meta3[1]=4;   
+        cant_metas = 3;
         
         //obstaculos
         lv[5][3] = 4;
@@ -480,8 +537,10 @@ public class PuzzleController extends Controller {
         meta1[1] = 4;
         
         lv[1][5] = 3;
-        meta1[0] = 1;
-        meta1[1] = 5;
+        meta2[0] = 1;
+        meta2[1] = 5;
+        
+         cant_metas = 2;
         
         
         lv[2][0] =4;
@@ -509,7 +568,8 @@ public class PuzzleController extends Controller {
         lv[7][0] = 1;//jugador
         lv[7][5] = 3;//meta
         meta1[0]=7;
-        meta1[1]=4;
+        meta1[1]=5;
+        cant_metas =1;
         
         lv[5][4] = 4;
         lv[5][4] = 4;
