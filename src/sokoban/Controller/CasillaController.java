@@ -88,9 +88,6 @@ public class CasillaController extends Controller {
        return null;
     }
 
-    @FXML
-    private void Click(MouseEvent event) {
-        cnt.CasillaClick(this);
-    }
+    
     
 }
