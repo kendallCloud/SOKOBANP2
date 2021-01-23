@@ -85,4 +85,13 @@ public class PrincipalController extends Controller {
         FlowController.getInstance().goViewInWindow("Puzzle");
         }
     }
+
+    @FXML
+    private void CargarPartida(ActionEvent event) {
+        
+        AppContext.getInstance().set("guardada",true); 
+        
+        FlowController.getInstance().salir();
+        FlowController.getInstance().goViewInWindow("Puzzle");
+    }
 }

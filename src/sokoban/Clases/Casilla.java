@@ -50,6 +50,7 @@ public class Casilla {
             case 3:return url+"meta"+png;
             case 4:return url+"block"+png;
             case 5:return url+"piso"+png;
+            case 6:return url+"piso"+png;
             default:return "";
         }      
     }
