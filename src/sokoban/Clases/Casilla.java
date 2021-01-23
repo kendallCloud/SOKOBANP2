@@ -34,6 +34,16 @@ public class Casilla {
         this.img = AsignarImg(tipo);
         this.transitable = CaminarSobre(tipo);
     }
+
+    public Casilla() {
+        this.mov = false;
+        this.tipo = -1;
+        this.fil = -1;
+        this.col = -1;
+        this.img = "";
+        this.transitable = false;
+        
+    }
      public void pos(int x ,int y){
         this.fil = x;
         this.col = y;

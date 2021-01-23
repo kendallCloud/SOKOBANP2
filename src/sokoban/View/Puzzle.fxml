@@ -34,7 +34,7 @@
         </rowConstraints>
       </GridPane>
       <JFXTextField fx:id="txtmetas" alignment="CENTER" blendMode="COLOR_BURN" cache="true" cacheHint="SPEED" editable="false" layoutX="502.0" layoutY="157.0" prefHeight="29.0" prefWidth="166.0" promptText="Metas restantes:" styleClass="texto" stylesheets="@sokob.css" />
-      <JFXButton layoutX="531.0" layoutY="421.0" prefHeight="63.0" prefWidth="109.0" styleClass="buton" stylesheets="@sokob.css" text="Retroceder" />
+      <JFXButton layoutX="531.0" layoutY="421.0" onAction="#Retroceder" prefHeight="63.0" prefWidth="109.0" styleClass="buton" stylesheets="@sokob.css" text="Retroceder" />
       <JFXButton fx:id="btnPausa" layoutX="521.0" layoutY="217.0" onAction="#Pausar" prefHeight="38.0" prefWidth="129.0" styleClass="buton" stylesheets="@sokob.css" text="Pausar música" />
       <JFXTextField fx:id="txtnivel" alignment="CENTER" blendMode="COLOR_BURN" cache="true" cacheHint="SPEED" editable="false" layoutX="502.0" layoutY="114.0" prefHeight="29.0" prefWidth="166.0" promptText="Metas alcanzadas:" styleClass="texto" stylesheets="@sokob.css" text="NIVEL " />
    </children>
