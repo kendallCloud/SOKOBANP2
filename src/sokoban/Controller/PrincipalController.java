@@ -7,6 +7,7 @@ package sokoban.Controller;
 
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
+import java.util.ArrayList;
 import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,9 +18,12 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
+import sokoban.Dto.PartidaDto;
+import sokoban.Service.PartidaService;
 import sokoban.Util.AppContext;
 import sokoban.Util.FlowController;
 import sokoban.Util.Mensaje;
+import sokoban.Util.Respuesta;
 
 /**
  * FXML Controller class
@@ -89,10 +93,13 @@ public class PrincipalController extends Controller {
 
     @FXML
     private void CargarPartida(ActionEvent event) {
-        if(validar()){
-        AppContext.getInstance().set("guardada",true);         
-        FlowController.getInstance().salir();
-        FlowController.getInstance().goViewInWindow("Puzzle");
+        PartidaService con = new PartidaService();
+        if(validar()){ 
+            Respuesta ans = con.getByNombre(txtNombre.getText());
+            ArrayList<PartidaDto> resultado = (ArrayList<PartidaDto>) ans.getResultado("Partida");
+         if(resultado.get(0)!=null) AppContext.getInstance().set("dto",resultado.get(0));
+            FlowController.getInstance().salir();
+            FlowController.getInstance().goViewInWindow("Puzzle");
         }
     }
 }

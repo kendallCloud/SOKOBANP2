@@ -33,39 +33,39 @@ public class PartidaService {
       public Respuesta getByNombre(String name){
         try {
             Query query = em.createNamedQuery( "Partida.findByNombre",Partida.class);
-            
             Query setParameter = query.setParameter("nombre",name);
-            return new Respuesta(Boolean.TRUE, "", "", "Partida", convertirLista(query.getResultList()));
+            return new Respuesta(Boolean.TRUE, "Se encontró una partida registrada con su nombre.", "", "Partida", convertirLista(query.getResultList()));
         } catch (Exception ex) {
             Logger.getLogger(PartidaService.class.getName()).log(Level.SEVERE, "Ocurrio un error al obtener la partida", ex);
             return new Respuesta(Boolean.FALSE, "Ocurrio un error al obtener la partida", ex.getMessage());
         }
     }
        
-      public Respuesta guardarPartida(PartidaDto dto){
+      public Respuesta guardarPartida(PartidaDto dto,boolean nuevo){
         try {
             et = em.getTransaction();
             et.begin();
             Partida entity = new Partida();
            //nuevo Paciente.
+           if(nuevo){
                 entity = new Partida(dto);
                 em.persist(entity);//Guardo en BD
-             
+           }else{
                 entity = em.find(Partida.class,dto.getId());
                 if(entity == null){
-                    et.rollback();
-                    return new Respuesta(false, "No se encontró la partida a modificar", "NoResultException");
+                   et.rollback();
+                   return new Respuesta(false, "No se encontró la partida a modificar", "NoResultException");
                 }
                 entity.Actualizar(dto);
                 entity = em.merge(entity);
-            
+           } 
             et.commit();
-            return new Respuesta(true, "Se guardó el paciente  exitosamente", "", "Partida", new PartidaDto(entity));
+            return new Respuesta(true, "Se guardó la partida  exitosamente", "", "Partida", new PartidaDto(entity));
         } catch (Exception ex) {
             et.rollback();
             Logger.getLogger(Partida.class.getName()).log(Level.SEVERE, "Ocurrio un error al registrar la partida", ex);
             return new Respuesta(Boolean.FALSE, "Ocurrio un error al registrar la partida", ex.getMessage());
-        }
+            }
     }
       
       private List<PartidaDto> convertirLista(List<Partida> lista){

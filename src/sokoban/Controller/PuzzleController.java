@@ -62,7 +62,7 @@ public class PuzzleController extends Controller {
     @FXML
     private AnchorPane root;
     @FXML
-    private JFXTextField txtmetas;
+    private JFXTextField txtname;
 
     /**
      * Initializes the controller class.
@@ -73,8 +73,19 @@ public class PuzzleController extends Controller {
         
         AppContext.getInstance().set("tablero",this);
         tabl = new CasillaController[8][6];
-        nivel = (int)AppContext.getInstance().get("lvl");
-        txtmetas.setText((String) AppContext.getInstance().get("nombre"));
+        
+     PartidaDto saved = null;
+     if(AppContext.getInstance().get("dto") != null) saved = (PartidaDto) AppContext.getInstance().get("dto");
+        String name = "";
+        if(saved != null){
+             Mensaje.show(Alert.AlertType.INFORMATION, "Resultado de la consulta en BD", "Partida cargada exitosamente!");
+             nivel = saved.getNivel();
+             name = saved.getNombre();
+        }else{
+            nivel = (int)AppContext.getInstance().get("lvl");
+            name = (String)AppContext.getInstance().get("nombre");
+        }
+        txtname.setText(name);
         SeleccNivel(nivel);
     
         LlenarCasillas();
@@ -112,7 +123,7 @@ public class PuzzleController extends Controller {
                         MoverCaja(x+1,y,'D');
                          moverBox = true;
                         if(Gana())GameOver();
-                        else if(fail) Mensaje.show(Alert.AlertType.INFORMATION, "F","GAME OVER, NIVEL FALLIDO.");
+                        else if(fail) Mensaje.show(Alert.AlertType.INFORMATION, "F","GAME OVER, NECESITA REINICIO DE NIVEL.");
                     }
                 }
             }   if(event.getCode().equals(KeyCode.RIGHT)){ 
@@ -128,8 +139,7 @@ public class PuzzleController extends Controller {
                         MoverCaja(x,y+1,'R');
                          moverBox = true;
                         if(Gana())GameOver();
-                        else if(fail) Mensaje.show(Alert.AlertType.INFORMATION, "F","GAME OVER, NIVEL FALLIDO.");
-                    }
+                       else if(fail) Mensaje.show(Alert.AlertType.INFORMATION, "F","GAME OVER, NECESITA REINICIO DE NIVEL.");                    }
                 }
             }   if(event.getCode().equals(KeyCode.LEFT)){   
                 System.out.println("LEFT!");
@@ -143,20 +153,19 @@ public class PuzzleController extends Controller {
                        MoverCaja(x,y-1,'L');//mando la posición actual y la dirección a la que quiero moverla.
                         moverBox = true;
                         if(Gana())GameOver();
-                        else if(fail) Mensaje.show(Alert.AlertType.INFORMATION, "F","GAME OVER, NIVEL FALLIDO.");
+                       else if(fail) Mensaje.show(Alert.AlertType.INFORMATION, "F","GAME OVER, NECESITA REINICIO DE NIVEL.");
                     }
                 }
             }   event.consume();
         });
        
-                }
-    
+                }   
     
       @FXML
     private void Guardar(ActionEvent event) {
         PartidaService pquery = new PartidaService();
-        PartidaDto p = new PartidaDto(0,txtmetas.getText(), nivel);
-        Respuesta guard = pquery.guardarPartida(p);
+        PartidaDto p = new PartidaDto(0,txtname.getText(), nivel);
+        Respuesta guard = pquery.guardarPartida(p,true);
         Mensaje.show(Alert.AlertType.WARNING, "Resultado en BD", guard.getMensaje());
           System.out.println(guard.getMensajeInterno());
         char cod,c1 = '-',c2 = '-',c3 = '-';
@@ -174,12 +183,12 @@ public class PuzzleController extends Controller {
                             n++;
                             break;
                         case 2:
-                            c2 = (char)((char)i+65);//convierto el número en caracter.
+                            c2 = (char)((char)i+65);
                             col2=j;
                             n++;
                             break;
                         case 3:
-                            c3 = (char)((char)i+65);//convierto el número en caracter.
+                            c3 = (char)((char)i+65);
                             col3=j;
                             n++;
                             break;
@@ -321,7 +330,6 @@ public class PuzzleController extends Controller {
                     tablero.add(CrearPane(cas[x+1][y],(x+1), y), y, x+1);
                     tabl[x][y].Desaparecer();
                      lv[x][y] = 5;
-                  //   lst_event='z';
                     
                 }
           break;
@@ -335,7 +343,7 @@ public class PuzzleController extends Controller {
                     tablero.add(CrearPane(cas[x-1][y],(x-1), y), y, x-1);               
                      tabl[x][y].Desaparecer();
                       lv[x][y] = 5;    
-                      //  lst_event='z';
+                 
                 }
             break;    
             
@@ -352,7 +360,7 @@ public class PuzzleController extends Controller {
                  tabl[x][y].Desaparecer();
                  lv[x][y] = 5;
                   lv[x][y+1]=2;    
-               //     lst_event='z';
+            
                    }
               
           break;
@@ -370,7 +378,7 @@ public class PuzzleController extends Controller {
                      tabl[x][y].Desaparecer();
                      lv[x][y] = 5;
                       lv[x][y-1]=2;
-                   //    lst_event='z';
+                   
                 }
               
               
@@ -750,6 +758,8 @@ public class PuzzleController extends Controller {
         
         lv[0][4] = 6;
         lv[7][4] = 6;
+        lv[7][1] = 6;
+        
            
         //cajas
         lv[1][2] = 2;
@@ -795,6 +805,8 @@ public class PuzzleController extends Controller {
         lv[2][1] = 6;
          lv[3][3] = 6;
         lv[3][1] = 6;
+   
+     
               
         lv[1][4] = 3;
         meta1[0] = 1;meta1[1] = 4;
@@ -832,10 +844,11 @@ public class PuzzleController extends Controller {
         lv[7][0] = 1;//jugador
         lv[7][5] = 3;//meta
         
-        lv[3][2] = 6;
-        lv[4][2] = 6;
-        lv[2][1] = 6;
-        lv[0][5] = 6;
+        lv[3][2]=6;
+        lv[4][2]=6;
+        lv[4][5]=6;
+        lv[2][1]=6;
+        lv[0][5]=6;
         
         meta1[0]=7;
         meta1[1]=5;
@@ -855,7 +868,7 @@ public class PuzzleController extends Controller {
         lv[5][2] = 4;
         
         lv[5][5] = 4;
-        lv[3][3] = 2;
+        lv[3][3] = 2;//caja
         
      }
 
