@@ -52,7 +52,7 @@ public class PrincipalController extends Controller {
     public void transicion(){
         FadeTransition ft = new FadeTransition(Duration.millis(1250),img);
         ft.setFromValue(1.0);
-        ft.setToValue(0.3);
+        ft.setToValue(0);
         ft.setCycleCount(300);
         ft.setAutoReverse(true);
         ft.play();
@@ -80,7 +80,8 @@ public class PrincipalController extends Controller {
       int n = 1;  
      if(validar()){
        if(cmbox.getSelectionModel().getSelectedItem() != null) n = (int)Integer.parseInt(cmbox.getSelectionModel().getSelectedItem());
-       AppContext.getInstance().set("lvl",n);  
+       AppContext.getInstance().set("lvl",n);
+       AppContext.getInstance().set("nombre",txtNombre.getText());
         FlowController.getInstance().salir();
         FlowController.getInstance().goViewInWindow("Puzzle");
         }
@@ -88,10 +89,10 @@ public class PrincipalController extends Controller {
 
     @FXML
     private void CargarPartida(ActionEvent event) {
-        
-        AppContext.getInstance().set("guardada",true); 
-        
+        if(validar()){
+        AppContext.getInstance().set("guardada",true);         
         FlowController.getInstance().salir();
         FlowController.getInstance().goViewInWindow("Puzzle");
+        }
     }
 }

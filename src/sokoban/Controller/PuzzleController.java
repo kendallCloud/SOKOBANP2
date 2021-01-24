@@ -19,10 +19,13 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import sokoban.Clases.Casilla;
+import sokoban.Dto.PartidaDto;
 import sokoban.Main;
+import sokoban.Service.PartidaService;
 import sokoban.Util.AppContext;
 import sokoban.Util.FlowController;
 import sokoban.Util.Mensaje;
+import sokoban.Util.Respuesta;
  //import javafx.scene.transform.Translate;
 
 /**
@@ -52,6 +55,7 @@ public class PuzzleController extends Controller {
     Casilla[][] cas = new Casilla[8][6];
     boolean fail = false;
     boolean moverBox;
+    boolean back=true;
     
     @FXML
     private JFXTextField txtnivel;
@@ -70,11 +74,13 @@ public class PuzzleController extends Controller {
         AppContext.getInstance().set("tablero",this);
         tabl = new CasillaController[8][6];
         nivel = (int)AppContext.getInstance().get("lvl");
+        txtmetas.setText((String) AppContext.getInstance().get("nombre"));
         SeleccNivel(nivel);
     
         LlenarCasillas();
                 
         root.setOnKeyPressed((KeyEvent event) -> {
+            back = true;
             int x=jugador.getFil(),y = jugador.getCol();
           //  System.out.println("Jugador|X"+x+"|Y"+y);
             if(event.getCode().equals(KeyCode.UP)){
@@ -91,7 +97,7 @@ public class PuzzleController extends Controller {
                         MoverCaja(x-1,y,'U');
                          moverBox = true;
                         if(Gana())GameOver();
-                        else if(fail) Mensaje.show(Alert.AlertType.INFORMATION, "F","GAME OVER, NIVEL FALLIDO.");
+                        else if(fail) Mensaje.show(Alert.AlertType.INFORMATION, "F","GAME OVER, NECESITA REINICIO DE NIVEL.");
                     }
                 }
             }   if(event.getCode().equals(KeyCode.DOWN)){ 
@@ -148,7 +154,13 @@ public class PuzzleController extends Controller {
     
       @FXML
     private void Guardar(ActionEvent event) {
+        PartidaService pquery = new PartidaService();
+        PartidaDto p = new PartidaDto(0,txtmetas.getText(), nivel);
+        Respuesta guard = pquery.guardarPartida(p);
+        Mensaje.show(Alert.AlertType.WARNING, "Resultado en BD", guard.getMensaje());
+          System.out.println(guard.getMensajeInterno());
         char cod,c1 = '-',c2 = '-',c3 = '-';
+        int col1 = 0,col2 = 0,col3 = 0;//columnas
         cod = (char) ((char)jugador.getFil()+65);
         int n = 1;
         
@@ -158,14 +170,17 @@ public class PuzzleController extends Controller {
                     switch (n) {
                         case 1:
                             c1 = (char)((char)i+65);//convierto el número en caracter.
+                            col1=j;
                             n++;
                             break;
                         case 2:
                             c2 = (char)((char)i+65);//convierto el número en caracter.
+                            col2=j;
                             n++;
                             break;
                         case 3:
                             c3 = (char)((char)i+65);//convierto el número en caracter.
+                            col3=j;
                             n++;
                             break;
                         default:
@@ -177,9 +192,9 @@ public class PuzzleController extends Controller {
         
      
         System.out.println("player"+cod+"|"+jugador.getCol());
-        System.out.println("caja1"+c1+"|");
-         System.out.println(c2+"|");
-          System.out.println(c3+"|");
+        System.out.println("caja1|"+c1+"|"+col1);
+         System.out.println("caja2|"+c2+"|"+col2);
+          System.out.println("caja3|"+c3+"|"+col3);
         
     }
 
@@ -192,14 +207,17 @@ public class PuzzleController extends Controller {
     
      @FXML
     private void Retroceder(ActionEvent event) {
-            RegresarJugador();
-           // if(moverBox)RegresarCaja();
+     
+           if(back){RegresarJugador();back=false;}
+           if(moverBox) RegresarCaja();
     }
     
      private void RegresarCaja(){
           int x = caja1.getFil(), y = caja1.getCol();
+          System.out.println("RegresarCaja|"+x+"|"+y+"|"+lst_event);
+     
          
-          switch(lst_event){
+          switch(lst_event){//último evento realizado
           case 'U':
                 if(x < 7 && x > 0){
                 if(lv[x+1][y] != 2 && 4 != lv[x+1][y]){
@@ -263,7 +281,7 @@ public class PuzzleController extends Controller {
           break;
           
           case 'R':     
-                if(0 < y ){
+                if(0 < y && y < 6){
                 if( lv[x][y-1] != 4 && lv[x][y-1] != 2){
                     fail = lv[x][y-1]==6;
                     cas[x][y-1] = caja1;
@@ -303,7 +321,7 @@ public class PuzzleController extends Controller {
                     tablero.add(CrearPane(cas[x+1][y],(x+1), y), y, x+1);
                     tabl[x][y].Desaparecer();
                      lv[x][y] = 5;
-                     lst_event='z';
+                  //   lst_event='z';
                     
                 }
           break;
@@ -317,7 +335,7 @@ public class PuzzleController extends Controller {
                     tablero.add(CrearPane(cas[x-1][y],(x-1), y), y, x-1);               
                      tabl[x][y].Desaparecer();
                       lv[x][y] = 5;    
-                        lst_event='z';
+                      //  lst_event='z';
                 }
             break;    
             
@@ -334,7 +352,7 @@ public class PuzzleController extends Controller {
                  tabl[x][y].Desaparecer();
                  lv[x][y] = 5;
                   lv[x][y+1]=2;    
-                    lst_event='z';
+               //     lst_event='z';
                    }
               
           break;
@@ -352,7 +370,7 @@ public class PuzzleController extends Controller {
                      tabl[x][y].Desaparecer();
                      lv[x][y] = 5;
                       lv[x][y-1]=2;
-                       lst_event='z';
+                   //    lst_event='z';
                 }
               
               

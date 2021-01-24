@@ -7,7 +7,7 @@ package sokoban.MODEL;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import sokoban.Dto.CoordenadaDto;
 
 /**
  *
@@ -40,7 +41,7 @@ public class Coordenada implements Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "ID")
-    private BigDecimal id;
+    private Long id;
     @Basic(optional = false)
     @Column(name = "JUGADOR")
     private String jugador;
@@ -52,26 +53,36 @@ public class Coordenada implements Serializable {
     @Column(name = "CAJA3")
     private String caja3;
     @OneToMany(mappedBy = "cords")
-    private Collection<Partida> partidaCollection;
+    private List<Partida> partidaList;
 
     public Coordenada() {
     }
 
-    public Coordenada(BigDecimal id) {
+    public Coordenada(Long id) {
         this.id = id;
     }
 
-    public Coordenada(BigDecimal id, String jugador, String caja1) {
+    public Coordenada(Long id, String jugador, String caja1,String caja2,String caja3) {
         this.id = id;
         this.jugador = jugador;
         this.caja1 = caja1;
+        this.caja2 = caja2;
+         this.caja3 = caja3;
     }
 
-    public BigDecimal getId() {
+    public Coordenada(CoordenadaDto dto) {
+        this.id = Long.valueOf(dto.getId());
+        this.jugador = dto.getJugador();
+        this.caja1 = dto.getCaja1();
+         this.caja2 = dto.getCaja2();
+         this.caja3 = dto.getCaja3();
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(BigDecimal id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -108,12 +119,12 @@ public class Coordenada implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Partida> getPartidaCollection() {
-        return partidaCollection;
+    public List<Partida> getPartidaList() {
+        return partidaList;
     }
 
-    public void setPartidaCollection(Collection<Partida> partidaCollection) {
-        this.partidaCollection = partidaCollection;
+    public void setPartidaList(List<Partida> partidaList) {
+        this.partidaList = partidaList;
     }
 
     @Override
@@ -139,6 +150,15 @@ public class Coordenada implements Serializable {
     @Override
     public String toString() {
         return "sokoban.MODEL.Coordenada[ id=" + id + " ]";
+    }
+
+    public void Actualizar(CoordenadaDto dto) {
+          this.id = Long.valueOf(dto.getId());
+        this.jugador = dto.getJugador();
+        this.caja1 = dto.getCaja1();
+         this.caja2 = dto.getCaja2();
+         this.caja3 = dto.getCaja3();
+       
     }
     
 }

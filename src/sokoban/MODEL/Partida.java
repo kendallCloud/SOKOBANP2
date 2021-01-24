@@ -18,10 +18,10 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import sokoban.Dto.PartidaDto;
 
 /**
- *
- * @author Kenda
+ * @author Kendall
  */
 @Entity
 @Table(name = "PARTIDA")
@@ -38,13 +38,13 @@ public class Partida implements Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "ID")
-    private BigDecimal id;
+    private Long id;
     @Basic(optional = false)
     @Column(name = "NOMBRE")
     private String nombre;
     @Basic(optional = false)
     @Column(name = "NIVEL")
-    private BigInteger nivel;
+    private Long nivel;
     @JoinColumn(name = "CORDS", referencedColumnName = "ID")
     @ManyToOne
     private Coordenada cords;
@@ -52,21 +52,32 @@ public class Partida implements Serializable {
     public Partida() {
     }
 
-    public Partida(BigDecimal id) {
+    public Partida(Long id) {
         this.id = id;
     }
 
-    public Partida(BigDecimal id, String nombre, BigInteger nivel) {
+    public Partida(Long id, String nombre, Long nivel) {
         this.id = id;
         this.nombre = nombre;
         this.nivel = nivel;
     }
 
-    public BigDecimal getId() {
+    public Partida(PartidaDto dto) {
+         this.id = dto.getId();
+        this.nombre = dto.getNombre();
+        this.nivel = Long.valueOf(dto.getNivel());
+    }
+      public void Actualizar(PartidaDto dto) {
+            this.id = Long.valueOf(dto.getId());
+            this.nombre = dto.getNombre();
+            this.nivel = Long.valueOf(dto.getNivel());
+        }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(BigDecimal id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -78,11 +89,11 @@ public class Partida implements Serializable {
         this.nombre = nombre;
     }
 
-    public BigInteger getNivel() {
+    public Long getNivel() {
         return nivel;
     }
 
-    public void setNivel(BigInteger nivel) {
+    public void setNivel(Long nivel) {
         this.nivel = nivel;
     }
 
