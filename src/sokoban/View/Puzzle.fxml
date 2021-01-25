@@ -13,7 +13,7 @@
       <Separator layoutX="495.0" layoutY="14.0" orientation="VERTICAL" prefHeight="558.0" prefWidth="14.0" />
       <JFXButton layoutX="521.0" layoutY="315.0" onAction="#Reinicio" prefHeight="38.0" prefWidth="129.0" styleClass="buton" stylesheets="@sokob.css" text="Reiniciar nivel" />
       <JFXButton layoutX="521.0" layoutY="267.0" onAction="#Guardar" prefHeight="38.0" prefWidth="129.0" styleClass="buton" stylesheets="@sokob.css" text="Guardar" />
-      <GridPane fx:id="tablero" gridLinesVisible="true" layoutX="27.0" layoutY="26.0" prefHeight="400.0" prefWidth="434.0">
+      <GridPane fx:id="tablero" layoutX="27.0" layoutY="26.0" prefHeight="400.0" prefWidth="434.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="65.0" minWidth="65.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="65.0" minWidth="65.0" prefWidth="65.0" />

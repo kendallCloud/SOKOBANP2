@@ -41,6 +41,7 @@ public class CasillaController extends Controller {
 
     public void setObj(Casilla obj) {
         this.obj = obj;
+        
         img.setImage(new Image(obj.getImg()));
     }
 
@@ -59,8 +60,14 @@ public class CasillaController extends Controller {
     public void setPane(Pane pane) {
         this.pane = pane;
     }
+    
+      public void setMeta(){
+          pane.setStyle("-fx-background-image:url(\"/sokoban/img/meta.png\")");
+      }
+    
 
     public void Desaparecer(){
+      
          FadeTransition ft = new FadeTransition(Duration.millis(500),img);
          ft.setFromValue(1.0);
          ft.setToValue(0);
@@ -80,7 +87,7 @@ public class CasillaController extends Controller {
     
     @Override
     public void initialize() {
-
+       
     }
 
     @Override

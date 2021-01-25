@@ -19,8 +19,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import sokoban.Clases.Casilla;
+import sokoban.Dto.CoordenadaDto;
 import sokoban.Dto.PartidaDto;
+import sokoban.MODEL.Coordenada;
 import sokoban.Main;
+import sokoban.Service.CoordenadaService;
 import sokoban.Service.PartidaService;
 import sokoban.Util.AppContext;
 import sokoban.Util.FlowController;
@@ -39,12 +42,10 @@ public class PuzzleController extends Controller {
     
     @FXML
     private JFXButton btnPausa;
-       
-     
+        
     CasillaController tabl[][] = new CasillaController[8][6];
     Casilla jugador;
     char lst_event;
-    
     Casilla caja1;
     private int nivel,cant_metas;
     int cont_metas = 0;
@@ -56,6 +57,9 @@ public class PuzzleController extends Controller {
     boolean fail = false;
     boolean moverBox;
     boolean back=true;
+     PartidaDto saved = null;
+     String name = "";
+     boolean nuevo;
     
     @FXML
     private JFXTextField txtnivel;
@@ -74,17 +78,20 @@ public class PuzzleController extends Controller {
         AppContext.getInstance().set("tablero",this);
         tabl = new CasillaController[8][6];
         
-     PartidaDto saved = null;
+    
      if(AppContext.getInstance().get("dto") != null) saved = (PartidaDto) AppContext.getInstance().get("dto");
-        String name = "";
+        
         if(saved != null){
-             Mensaje.show(Alert.AlertType.INFORMATION, "Resultado de la consulta en BD", "Partida cargada exitosamente!");
              nivel = saved.getNivel();
              name = saved.getNombre();
+             nuevo=false;
+             AppContext.getInstance().set("dto",null);
         }else{
+           if(AppContext.getInstance().get("dto")==null) nuevo = true;
             nivel = (int)AppContext.getInstance().get("lvl");
             name = (String)AppContext.getInstance().get("nombre");
         }
+        AppContext.getInstance().set("nombre",name);
         txtname.setText(name);
         SeleccNivel(nivel);
     
@@ -93,7 +100,7 @@ public class PuzzleController extends Controller {
         root.setOnKeyPressed((KeyEvent event) -> {
             back = true;
             int x=jugador.getFil(),y = jugador.getCol();
-          //  System.out.println("Jugador|X"+x+"|Y"+y);
+        
             if(event.getCode().equals(KeyCode.UP)){
                 System.out.println("UP!");
                 
@@ -162,13 +169,15 @@ public class PuzzleController extends Controller {
                 }   
     
       @FXML
-    private void Guardar(ActionEvent event) {
+    private void Guardar(ActionEvent event){
         PartidaService pquery = new PartidaService();
+        CoordenadaService cquery = new CoordenadaService();     
+       
         PartidaDto p = new PartidaDto(0,txtname.getText(), nivel);
-        Respuesta guard = pquery.guardarPartida(p,true);
-        Mensaje.show(Alert.AlertType.WARNING, "Resultado en BD", guard.getMensaje());
-          System.out.println(guard.getMensajeInterno());
+          Respuesta guard = pquery.guardarPartida(p,nuevo);
+      
         char cod,c1 = '-',c2 = '-',c3 = '-';
+        String jug,box1,box2,box3;
         int col1 = 0,col2 = 0,col3 = 0;//columnas
         cod = (char) ((char)jugador.getFil()+65);
         int n = 1;
@@ -199,50 +208,59 @@ public class PuzzleController extends Controller {
             }
          }
         
+        jug = ""+cod+""+jugador.getCol();
+        box1 = ""+c1+col1;
+        box2 = ""+c2+col2;
+        box3 = ""+c3+col3;
+        
+         CoordenadaDto c = new CoordenadaDto(0,jug,box1,box2,box3);
+        Respuesta save= cquery.guardarCoords(c,nuevo);
      
-        System.out.println("player"+cod+"|"+jugador.getCol());
-        System.out.println("caja1|"+c1+"|"+col1);
-         System.out.println("caja2|"+c2+"|"+col2);
-          System.out.println("caja3|"+c3+"|"+col3);
+        System.out.println(jug);
+        System.out.println(box1);
+         System.out.println(box2);
+          System.out.println(box3);
+          
+        
+          Mensaje.show(Alert.AlertType.WARNING, "Resultado en BD Partida", guard.getMensaje());
+          Mensaje.show(Alert.AlertType.WARNING, "Resultado en BD Coordenadas",save.getMensaje());
+          System.out.println(guard.getMensajeInterno());
         
     }
 
     
      @FXML
     private void Reinicio(ActionEvent event) {
-        Mensaje.show(Alert.AlertType.CONFIRMATION, "FAVOR CONFIRMAR", "¿Seguro de reiniciar el nivel?");      
         this.initialize();
     }  
     
      @FXML
-    private void Retroceder(ActionEvent event) {
-     
+    private void Retroceder(ActionEvent event) {    
            if(back){RegresarJugador();back=false;}
-           if(moverBox) RegresarCaja();
+           if(moverBox) RegresarCaja();moverBox=false;
     }
     
      private void RegresarCaja(){
-          int x = caja1.getFil(), y = caja1.getCol();
+          int x = caja1.getFil(), y = caja1.getCol();//ubicación de la última caja que moví
           System.out.println("RegresarCaja|"+x+"|"+y+"|"+lst_event);
-     
-         
+           
           switch(lst_event){//último evento realizado
           case 'U':
                 if(x < 7 && x > 0){
                 if(lv[x+1][y] != 2 && 4 != lv[x+1][y]){
-                    fail = lv[x+1][y]==6;
-                //mover caja
-                   cas[x+1][y] = caja1;
-                    cas[x+1][y].pos(x+1,y);  
+                    
+                     fail = lv[x+1][y]==6;
+                    cas[x+1][y] = caja1;            
+                    cas[x+1][y].pos(x+1,y);
+                     caja1 = cas[x+1][y];
+                     System.out.println(caja1.getCol()+"|"+caja1.getFil());
+              
+                  tablero.add(CrearPane(cas[x+1][y],x+1,y), y, x+1);//seteo caja.
                      
-                    caja1 = cas[x+1][y];
-                    System.out.println(caja1.getCol()+"|"+caja1.getFil());
-                    tablero.add(CrearPane(cas[x+1][y],x, y),y, x+1);//seteo caja.
-                
-                     tabl[x-1][y].Desaparecer();
-                     lv[x+1][y]=2;
-                     lv[x][y] = 5;
-                     MoverJugador(x-1,y,'D'); 
+                  tabl[x][y].Desaparecer();
+                 lv[x][y] = 5;
+                 lv[x+1][y] = 2;//nueva ubicación de la caja.
+                   
                     }
              }
             
@@ -251,25 +269,29 @@ public class PuzzleController extends Controller {
           case 'D':
               if(0 < x ){
                 if(lv[x-1][y] != 4 && lv[x-1][y] != 2){//4 = pared
-                    fail = lv[x-1][y]==6;
-                    cas[x-1][y] = caja1;
-                    cas[x-1][y].pos(x-1,y);  
-                    caja1 = cas[x-1][y];
-                    System.out.println(caja1.getCol()+"|"+caja1.getFil());
-                   
-                    tablero.add(CrearPane(cas[x-1][y],x, y),y, x-1);//seteo caja.
                   
-                     tabl[x+1][y].Desaparecer();
-                     lv[x][y]=5;
-                     lv[x-1][y]=2;
-                       MoverJugador(x+1,y,'U');
+                 fail = lv[x-1][y]==6;
+                 cas[x-1][y] = caja1;            
+                 cas[x-1][y].pos(x-1,y);
+                 caja1 = cas[x-1][y];
+                 System.out.println(caja1.getCol()+"|"+caja1.getFil());
+              
+                tablero.add(CrearPane(cas[x-1][y],x-1,y), y, x-1);//seteo caja.
+                     
+                tabl[x][y].Desaparecer();
+                 lv[x][y] = 5;
+                 lv[x-1][y] = 2;//nueva ubicación de la caja.
+                 //MoverJugador(x,y-1,'R');
+
+
+//MoverJugador(x+1,y,'U');
                 }
              }
                
           break;
             
           case 'L':        
-                if(y < 5){  
+               if(y < 5){  
                 if(lv[x][y+1] != 4 && lv[x][y+1] != 2){
                  fail = lv[x][y+1]==6;
                  cas[x][y+1] = caja1;            
@@ -279,14 +301,13 @@ public class PuzzleController extends Controller {
               
                 tablero.add(CrearPane(cas[x][y+1],x, y+1), y+1, x);//seteo caja.
                      
-                tabl[x][y-1].Desaparecer();
+                tabl[x][y].Desaparecer();
                  lv[x][y] = 5;
                  lv[x][y+1] = 2;//nueva ubicación de la caja.
-                   MoverJugador(x,y-1,'R');
+                 //MoverJugador(x,y-1,'R');
                     }
               }
-             
-          
+                     
           break;
           
           case 'R':     
@@ -301,10 +322,10 @@ public class PuzzleController extends Controller {
              
                     tablero.add(CrearPane(cas[x][y-1],x, y-1), y-1, x);//seteo caja.
                     
-                     tabl[x][y+1].Desaparecer();
-                         lv[x][y] = 5;
+                     tabl[x][y].Desaparecer();
+                     lv[x][y] = 5;
                      lv[x][y-1] = 2;//nueva ubicación de la caja.
-                       MoverJugador(x,y+1,'L');                    
+                      // MoverJugador(x,y+1,'L');                    
                 }
              }
           
@@ -324,7 +345,6 @@ public class PuzzleController extends Controller {
                   
                    cas[x+1][y] = jugador;
                     cas[x+1][y].pos(x+1, y);
-                   
                     jugador = cas[x+1][y];
                    cas[x][y].setTipo(5);
                     tablero.add(CrearPane(cas[x+1][y],(x+1), y), y, x+1);
@@ -588,8 +608,10 @@ public class PuzzleController extends Controller {
          Mensaje.show(Alert.AlertType.INFORMATION, "", "NIVEL COMPLETADO.");
          if(nivel < 5){ 
             AppContext.getInstance().set("lvl",(nivel+1));
+            saved=null;
             this.initialize();
          }
+         else Mensaje.show(Alert.AlertType.INFORMATION, "VICTORY", "¡FELICIDADES!.");
     }
 
     @Override
@@ -632,6 +654,7 @@ public class PuzzleController extends Controller {
             CasillaController controller = loader.getController();
             controller.setObj(c);
             tabl[i][j] = controller;
+            //if(c.getTipo() == 3)  tabl[i][j].setMeta();
             return loader.getRoot();
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -705,13 +728,14 @@ public class PuzzleController extends Controller {
                  lv[i][5]=6;
                 }        
              
-             lv[0][5] =1;
+             lv[0][4] =1;
              
              lv[2][1] =4;
              lv[3][2] =4;
              lv[4][3] =4;
              lv[3][5] =4;
              lv[4][5] =4;
+          
              
              lv[4][1]=2;
              lv[5][1]=2;
@@ -727,6 +751,7 @@ public class PuzzleController extends Controller {
              
              lv[3][3]=6;
              lv[3][1]=6;
+             lv[4][2] = 6;
              // lv[3][3]=6;
              
              for(int i = 0;i < 6;i++){
@@ -759,6 +784,7 @@ public class PuzzleController extends Controller {
         lv[0][4] = 6;
         lv[7][4] = 6;
         lv[7][1] = 6;
+        lv[2][4] = 6;
         
            
         //cajas
@@ -795,11 +821,13 @@ public class PuzzleController extends Controller {
         }
         cont=0;  
         
-        lv[0][0] = 1;//jugador
+        lv[0][1] = 1;//jugador
         
         lv[5][1] = 2;//cajas
         lv[5][3] = 2;
         
+        lv[0][0] = 6;
+        lv[1][0] = 6;
         lv[5][4] = 6;
         lv[6][5] = 6;
         lv[2][1] = 6;
@@ -846,9 +874,11 @@ public class PuzzleController extends Controller {
         
         lv[3][2]=6;
         lv[4][2]=6;
-        lv[4][5]=6;
+        lv[4][4]=6;
+        lv[5][4]=6;
         lv[2][1]=6;
         lv[0][5]=6;
+      
         
         meta1[0]=7;
         meta1[1]=5;
