@@ -78,10 +78,13 @@ public class PuzzleController extends Controller {
         AppContext.getInstance().set("tablero",this);
         tabl = new CasillaController[8][6];
         
+       CoordenadaService consulta = new CoordenadaService();       
     
      if(AppContext.getInstance().get("dto") != null) saved = (PartidaDto) AppContext.getInstance().get("dto");
+       
         
         if(saved != null){
+            Respuesta byId = consulta.getById(saved.getId());
              nivel = saved.getNivel();
              name = saved.getNombre();
              nuevo=false;
@@ -489,7 +492,7 @@ public class PuzzleController extends Controller {
                     caja1 = cas[x-1][y];
                     System.out.println(caja1.getCol()+"|"+caja1.getFil());
                    
-                    tablero.add(CrearPane(cas[x-1][y],x, y),y, x-1);//seteo caja.
+                    tablero.add(CrearPane(cas[x-1][y],x-1, y),y, x-1);//seteo caja.
                   
                      tabl[x+1][y].Desaparecer();
                      lv[x][y]=5;
@@ -509,7 +512,7 @@ public class PuzzleController extends Controller {
                      
                     caja1 = cas[x+1][y];
                     System.out.println(caja1.getCol()+"|"+caja1.getFil());
-                    tablero.add(CrearPane(cas[x+1][y],x, y),y, x+1);//seteo caja.
+                    tablero.add(CrearPane(cas[x+1][y],x+1, y),y, x+1);//seteo caja.
                 
                      tabl[x-1][y].Desaparecer();
                      lv[x+1][y]=2;
@@ -654,7 +657,7 @@ public class PuzzleController extends Controller {
             CasillaController controller = loader.getController();
             controller.setObj(c);
             tabl[i][j] = controller;
-            //if(c.getTipo() == 3)  tabl[i][j].setMeta();
+           
             return loader.getRoot();
         } catch (IOException ex) {
             ex.printStackTrace();

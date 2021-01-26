@@ -33,6 +33,8 @@ public class CasillaController extends Controller {
     private Pane pane;
     
     private final PuzzleController cnt = (PuzzleController) AppContext.getInstance().get("tablero");
+    @FXML
+    private ImageView img1;
       
 
     public Casilla getObj() {
@@ -40,8 +42,7 @@ public class CasillaController extends Controller {
     }
 
     public void setObj(Casilla obj) {
-        this.obj = obj;
-        
+        this.obj = obj;       
         img.setImage(new Image(obj.getImg()));
     }
 
@@ -75,19 +76,14 @@ public class CasillaController extends Controller {
          ft.setCycleCount(1);
          ft.play();
     }
-     public void Aparecer(){
-            FadeTransition ft = new FadeTransition(Duration.millis(500),img);
-         ft.setFromValue(0);
-         ft.setToValue(1.0);
-         ft.setNode(img);
-         ft.setCycleCount(4);
-         ft.play();
-    }
-    
     
     @Override
     public void initialize() {
-       
+       if(obj != null){
+           if(obj.getTipo() == 3){
+               setMeta();
+           }
+       }
     }
 
     @Override

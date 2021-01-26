@@ -66,7 +66,9 @@ public class Partida implements Serializable {
          this.id = dto.getId();
         this.nombre = dto.getNombre();
         this.nivel = Long.valueOf(dto.getNivel());
+       // this.cords  = dto.getCoords();
     }
+    
       public void Actualizar(PartidaDto dto) {
             this.id = Long.valueOf(dto.getId());
             this.nombre = dto.getNombre();

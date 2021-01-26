@@ -5,12 +5,17 @@
  */
 package sokoban.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
 import sokoban.Dto.CoordenadaDto;
+import sokoban.Dto.PartidaDto;
 import sokoban.MODEL.Coordenada;
+import sokoban.MODEL.Partida;
 import sokoban.Util.EntityManagerHelper;
 import sokoban.Util.Respuesta;
 
@@ -25,6 +30,18 @@ public class CoordenadaService {
     public CoordenadaService() {
         em = EntityManagerHelper.getManager();
     }
+    
+    
+     public Respuesta getById(Long id){
+        try {
+            Query query = em.createNamedQuery( "Partida.findByNombre",Partida.class);
+            Query setParameter = query.setParameter("id",id);
+            return new Respuesta(Boolean.TRUE, "Se encontró una partida registrada con su nombre.", "", "Partida", convertirLista(query.getResultList()));
+        } catch (Exception ex) {
+            Logger.getLogger(PartidaService.class.getName()).log(Level.SEVERE, "Ocurrio un error al obtener la partida", ex);
+            return new Respuesta(Boolean.FALSE, "Ocurrio un error al obtener la partida", ex.getMessage());
+          }
+        }
     
     
      public Respuesta guardarCoords(CoordenadaDto dto, boolean nuevo) {
@@ -52,5 +69,14 @@ public class CoordenadaService {
             return new Respuesta(Boolean.FALSE, "Ocurrio un error al registrar el paciente", ex.getMessage());
         }
     }
+     
+       private List<CoordenadaDto> convertirLista(List<Coordenada> lista){
+        List<CoordenadaDto> listaDto = new ArrayList<>();
+        lista.forEach(coordenada -> {
+            listaDto.add(new CoordenadaDto(coordenada));
+        });
+        return listaDto;
+    }
+     
     
 }

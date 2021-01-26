@@ -15,6 +15,7 @@ public class PartidaDto {
     private Long id;
     private String nombre;
     private int nivel;
+    private CoordenadaDto coords;
 
     public PartidaDto(int id, String nombre, int nivel) {
         this.id = Long.valueOf(id);
@@ -22,13 +23,27 @@ public class PartidaDto {
         this.nivel = nivel;
     }
     
+     public PartidaDto(int id, String nombre, int nivel,CoordenadaDto crds) {
+        this.id = Long.valueOf(id);
+        this.nombre = nombre;
+        this.nivel = nivel;
+        coords = crds;
+    }  
+    
      public PartidaDto(Partida p){
         this.id = p.getId();
         this.nombre = p.getNombre();
         this.nivel = p.getNivel().intValue();    
      }
-    
 
+    public CoordenadaDto getCoords() {
+        return coords;
+    }
+
+    public void setCoords(CoordenadaDto coords) {
+        this.coords = coords;
+    }
+     
     public Long getId() {
         return id;
     }

@@ -18,7 +18,6 @@ import sokoban.Util.EntityManagerHelper;
 import sokoban.Util.Respuesta;
 
 /**
- *
  * @author Kendall
  */
 public class PartidaService {
@@ -38,8 +37,8 @@ public class PartidaService {
         } catch (Exception ex) {
             Logger.getLogger(PartidaService.class.getName()).log(Level.SEVERE, "Ocurrio un error al obtener la partida", ex);
             return new Respuesta(Boolean.FALSE, "Ocurrio un error al obtener la partida", ex.getMessage());
+          }
         }
-    }
        
       public Respuesta guardarPartida(PartidaDto dto,boolean nuevo){
         try {
